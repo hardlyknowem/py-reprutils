@@ -12,7 +12,7 @@ from __future__ import (absolute_import, division, print_function,
 import os
 from distutils.core import setup
 
-DEFAULT_DESCRIPTION = 'Standard __repr__ Utilities'
+DEFAULT_DESCRIPTION = 'Helper Functions for `__repr__` Methods'
 if os.path.exists('README.md'):
     with open('README.md') as fp:
         LONG_DESCRIPTION = fp.read()
