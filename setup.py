@@ -28,7 +28,7 @@ if __name__ == '__main__':
         author='Matthew Lefavor',
         author_email='mclefavor@gmail.com',
         url='https://github.com/mlefavor/py-reprutils',
-        # TODO: download_url=,
+        download_url='https://pypi.python.org/pypi/reprutils',
         py_modules=['reprutils'],
         classifiers=[
             "Development Status :: 4 - Beta",
