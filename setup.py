@@ -9,23 +9,22 @@ Date:   2013-04-04
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import os
 from distutils.core import setup
+
+DEFAULT_DESCRIPTION = 'Standard __repr__ Utilities'
+if os.path.exists('README.md'):
+    with open('README.md') as fp:
+        LONG_DESCRIPTION = fp.read()
+else:
+    LONG_DESCRIPTION = DEFAULT_DESCRIPTION
 
 if __name__ == '__main__':
     setup(
         name="reprutils",
         version='1.0',
-        description='Standard __repr__ Utilities',
-        long_description="""\
-Helper functions for common `__repr__` patterns
------------------------------------------------
-
-Descriptors and functions for use in creating `__repr__` methods for
-Python objects according to common patterns. Currently, support is
-implemented for creating constructor-style reprs (results which look
-like a valid python constructor to create a new equivalent object).
-
-""",
+        description=DEFAULT_DESCRIPTION,
+        long_description=LONG_DESCRIPTION,
         author='Matthew Lefavor',
         author_email='mclefavor@gmail.com',
         url='https://github.com/mlefavor/py-reprutils',
