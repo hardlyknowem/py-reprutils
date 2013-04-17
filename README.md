@@ -4,9 +4,7 @@ reprutils
 This is a simple Python module for reducing the boilerplate code
 involved in writing `__repr__` methods.
 
-* Author: Matthew Lefavor
-* Email:  mclefavor@gmail.com
-
+This software was written by Matthew Lefavor (mclefavor _at_ gmail.com).
 The license for this software can be found in the LICENSE text file
 accompanying this distribution.
 
