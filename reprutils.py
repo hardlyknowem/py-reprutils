@@ -55,12 +55,18 @@ from __future__ import (absolute_import, division, print_function,
 
 import functools
 import types
+import itertools
 import sys
 
 PY2 = sys.version_info < (3,)
 
 if PY2:
     from itertools import imap as map
+    string_base = basestring
+    iteritems = dict.iteritems
+else:
+    string_base = str
+    iteritems = dict.items
 
 __all__ = ['identifier', 'standard_repr', 'GetattrRepr']
 
@@ -74,7 +80,7 @@ def identifier(cls):
     return cls.__module__ + '.' + cls.__name__
 
 
-def standard_repr(obj, *args, **kwargs):
+def standard_repr(obj, args=None, kwargs=None):
     """Return a repr-style string for obj, echoing and repring each argument.
 
     The output of this format follows the convention described in the
@@ -82,36 +88,47 @@ def standard_repr(obj, *args, **kwargs):
     obj with a fully qualified path name, with the other positional and
     keyword arguments acting as arguments to the constructor.
 
-    Note that repr, not str, will be called on each argument. This means
-    that strings will be enclosed in quotation marks and escaped (which
-    is exactly what one would expect).
+    The first argument is a reference to the object of which the result
+    should be a representation. The second argument is a list of values
+    to appear as positional arguments in the repr. (These should be
+    actual values and not already converted to repr-ized strings). The
+    final argument should be a list of (kwarg, value) tuples which will
+    appear in the repr as positional arguments, in that order.
+
+    This unwieldy argument syntax is necessary to ensure that the
+    keyword arguments are ordered properly. (This used to accept *args
+    and **kwargs, but the ordering of keyword arguments is arbitrary in
+    that case.)
+
+    Note that repr (not str) will be called on each argument. This means
+    that strings will be enclosed in quotation marks and escaped in the
+    result (which is exactly what one would expect).
 
     >>> class A(object):
     ...     pass
-    >>> standard_repr(A(), 'mass\n', 45.3, 200, True, parent=None)
+    >>> standard_repr(A(), ['mass\n', 45.3, 200, True], [('parent', None)])
     __main__.A('mass\n', 45.3, 200, True, parent=None)
 
     @param obj: The object to be repr'ed.
     @param args: Positional arguments to appear in the repr.
-    @param kwargs: Keyword arguments to appear in the repr.
+    @param kwargs: A list of (kwarg, value) tuples. The `kwarg` element
+        must be a string.
 
     """
-    parts = [identifier(obj.__class__), '(', ', '.join(map(repr, args))]
+    if args is None:
+        args = []
+    if kwargs is None:
+        kwargs = []
 
-    has_items = bool(args)
-    if kwargs:
-        # Sort to get consistent behavior
-        for key, value in sorted(kwargs.iteritems()):
-            if has_items:
-                parts.append(', ')
-            parts.append(key)
-            parts.append('=')
-            parts.append(repr(value))
-            has_items = True
+    if not all(isinstance(tpl[0], string_base) for tpl in kwargs):
+        raise TypeError('kwarg names must be strings')
 
-    parts.append(')')
+    items = itertools.chain(
+        map(repr, args),
+        ('{0}={1!r}'.format(kwarg, value) for kwarg, value in kwargs),
+    )
 
-    return ''.join(parts)
+    return ''.join([identifier(obj.__class__), '(', ', '.join(items), ')'])
 
 
 class GetattrRepr(object):
@@ -142,17 +159,29 @@ class GetattrRepr(object):
     __main__.MyClass('mass', 45.3, units='kilograms')
 
     There is one further subtlety to make it more syntactically
-    convenient. Every argument must be a str/bytes object, except the
-    last, which may possibly be some non-str/bytes iterable. If it is
-    not a str or bytes object, it will be iterated over and each item
-    within will be inserted into kwargs as both a key and a value. This
-    is to avoid repetitive code for which the name of a keyword
-    parameter shares the same name as the instance attribute. This is
-    perhaps better demonstrated by example. The following two lines of
-    code are exactly equivalent:
+    convenient. Every positional argument must be a str/bytes object,
+    except the last, which may possibly be some other kind of iterable.
+    If it is not a str or bytes object, it will be iterated over. For
+    each item that is a tuple, it will be assumed that the first item
+    is the name of the keyword parameter and the second item is the
+    attribute name that should be called. For each item that is not a
+    tuple, it will be assumed to be both the name of the parameter and
+    the name of the attribute. This is done to allow for repeatable
+    ordering of keyword arguments. The handling of non-tuple arguments
+    is pure sugar to avoid repetitive typing. Any keyword arguments
+    that are also passed to the function will appear in the resulting
+    repr in arbitrary order, after any keyword arguments specified in
+    this manner.
+
+    The following are all equivalent (with the exception of the way
+    keywords are ordered in the first example, which depends on the
+    python implementation):
 
     >>> GetattrRepr('pos1', 'pos2', kw1='kw1', kw2='kw2', kw3='kw3')
     >>> GetattrRepr('pos1', 'pos2', ['kw1', 'kw2', 'kw3'])
+    >>> GetattrRepr('pos1', 'pos2', [('kw1', 'kw1'), ('kw2', 'kw2'),
+    ...                              ('kw3', 'kw3')])
+    >>> GetattrRepr('pos1', 'pos2', ['kw1', ('kw2', 'kw2')], kw3='kw3')
 
     """
     def __init__(self, *args, **kwargs):
@@ -166,15 +195,16 @@ class GetattrRepr(object):
             associated names of attributes to appear as values.
 
         """
-        self.args = args
-        self.kwargs = kwargs
-
-        if args and not isinstance(args[-1], six.string_types):
-            kwargs.update((name, name) for name in args[-1])
-            args = args[:-1]
-
-        self.args = args
-        self.kwargs = kwargs
+        if args and not isinstance(args[-1], string_base):
+            self.args = args[:-1]
+            self.kwargs = [
+                item if not isinstance(item, string_base) else (item, item)
+                for item in args[-1]
+            ]
+            self.kwargs.extend(iteritems(kwargs))
+        else:
+            self.args = args
+            self.kwargs = list(iteritems(kwargs))
 
     def __get__(self, instance, owner):
         """Return this descriptor as a bound method.
@@ -186,7 +216,10 @@ class GetattrRepr(object):
         @param owner: The class which defines the attribute.
 
         """
-        return types.MethodType(self.__call__, instance, owner)
+        if instance is None:
+            return self
+
+        return types.MethodType(self.__call__, instance)
 
     def __call__(self, instance):
         """Return a standard representation of the object."""
@@ -194,8 +227,8 @@ class GetattrRepr(object):
         # It will return instance.<arg>
         my_getattr = functools.partial(getattr, instance)
         return standard_repr(
-            instance, *(map(my_getattr, self.args)),
-            **{k: my_getattr(v) for k, v in six.iteritems(self.kwargs)}
+            instance, list(map(my_getattr, self.args)),
+            [(k, my_getattr(v)) for k, v in self.kwargs]
         )
 
     # Python 2 can't take unicode as __name__.
