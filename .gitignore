@@ -18,6 +18,7 @@ develop-eggs
 lib
 lib64
 MANIFEST
+.pypirc
 
 # Installer logs
 pip-log.txt
