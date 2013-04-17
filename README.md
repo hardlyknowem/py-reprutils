@@ -2,7 +2,8 @@ reprutils
 =========
 
 This is a simple Python module for reducing the boilerplate code
-involved in writing `__repr__` methods.
+involved in writing `__repr__` methods. This code works for all Python
+versions from 2.6 to 3.3.
 
 This software was written by Matthew Lefavor (mclefavor _at_ gmail.com).
 The license for this software can be found in the LICENSE text file
