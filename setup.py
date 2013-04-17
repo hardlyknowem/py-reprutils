@@ -9,8 +9,18 @@ Date:   2013-04-04
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import codecs
 import os
 from distutils.core import setup
+
+# Work around mbcs bug in distutils.
+# http://bugs.python.org/issue10945
+try:
+    codecs.lookup('mbcs')
+except LookupError:
+    ascii = codecs.lookup('ascii')
+    func = lambda name, enc=ascii: enc if name == 'mbcs' else None
+    codecs.register(func)
 
 DEFAULT_DESCRIPTION = 'Helper Functions for `__repr__` Methods'
 if os.path.exists('README.md'):
