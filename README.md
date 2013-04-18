@@ -14,7 +14,7 @@ Installation
 
 Download the reprutils source archive from PyPI. After downloading,
 unpack the archive and run the standard "python setup.py install" with
-your favorite Python interpreter:
+your favorite Python interpreter::
 
     my-shell$ tar -xf reprutils-1.0.tar.gz
     my-shell$ cd reprutils-1.0
@@ -51,6 +51,9 @@ Example usages of both are given below; for more information about
 nitty-gritty details (like the ordering of keyword arguments) and some
 syntactic sugar, consult the docstrings for ``standard_repr`` and
 ``GetattrRepr``.
+
+Here are two examples of basic usages of both ``standard_repr`` and
+``GetattrRepr``::
 
     >>> from reprutils import standard_repr, GetattrRepr
     >>> class DataPoint(object):
