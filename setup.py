@@ -23,8 +23,8 @@ except LookupError:
     codecs.register(func)
 
 DEFAULT_DESCRIPTION = 'Helper Functions for `__repr__` Methods'
-if os.path.exists('README.md'):
-    with open('README.md') as fp:
+if os.path.exists('README.rst'):
+    with open('README.rst') as fp:
         LONG_DESCRIPTION = fp.read()
 else:
     LONG_DESCRIPTION = DEFAULT_DESCRIPTION
