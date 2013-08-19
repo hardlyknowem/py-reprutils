@@ -19,7 +19,7 @@ try:
     codecs.lookup('mbcs')
 except LookupError:
     ascii = codecs.lookup('ascii')
-    func = lambda name, enc=ascii: enc if name == 'mbcs' else None
+    func = lambda name, enc = ascii: enc if name == 'mbcs' else None
     codecs.register(func)
 
 DEFAULT_DESCRIPTION = 'Helper Functions for `__repr__` Methods'
@@ -40,6 +40,7 @@ if __name__ == '__main__':
         url='https://github.com/mlefavor/py-reprutils',
         download_url='https://pypi.python.org/pypi/reprutils',
         py_modules=['reprutils'],
+        keywords="reprutils, repr, __repr__",
         classifiers=[
             "Development Status :: 4 - Beta",
             "Intended Audience :: Developers",
