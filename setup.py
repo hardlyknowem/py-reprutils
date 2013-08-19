@@ -2,7 +2,7 @@
 """Setup script for `reprutils` module.
 
 Author: Matthew Lefavor
-Email:  matthew.lefavor@nasa.gov
+Email:  mclefavor@gmail.com
 Date:   2013-04-04
 
 """
