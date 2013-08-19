@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""This is a one-line description of the module.
+"""Setup script for `reprutils` module.
 
 Author: Matthew Lefavor
 Email:  matthew.lefavor@nasa.gov
