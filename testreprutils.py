@@ -1,9 +1,5 @@
 #!/usr/bin/env python
-"""This is a one-line description of the module.
-
-Author: Matthew Lefavor
-Email:  matthew.lefavor@nasa.gov
-Date:   2013-04-03
+"""Tests for reprutils.
 
 """
 from __future__ import (absolute_import, division, print_function,

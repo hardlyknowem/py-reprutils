@@ -45,8 +45,7 @@ __main__.MyClass('counts', 400, units=None)
 >>> repr(my_object2)
 __main__.MyClass('mass', 45.3, units='kilograms')
 
-Author: Matthew Lefavor
-Email:  matthew.lefavor@nasa.gov
+Author: Emma Lefavor
 Date:   2013-02-06
 
 """

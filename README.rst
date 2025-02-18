@@ -5,9 +5,17 @@ This is a simple Python module for reducing the boilerplate code
 involved in writing ``__repr__`` methods. This code works for all
 Python versions from 2.6 to 3.3.
 
-This software was written by Matthew Lefavor (mclefavor _at_ gmail.com).
 The license for this software can be found in the LICENSE text file
 accompanying this distribution.
+
+Deprecation and Warning
+-----------------------
+
+This library has not been maintained for over 10 years, and will likely never
+receive an update. If you are looking at this project because you are the kind
+of person who likes to avoid boilerplate code, you almost certainly want to be
+using `attrs <https://www.attrs.org/en/stable/index.html>` instead of this
+library.
 
 Installation
 ------------

@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 """Setup script for `reprutils` module.
 
-Author: Matthew Lefavor
-Email:  mclefavor@gmail.com
+Author: Emma Lefavor
 Date:   2013-04-04
 
 """
@@ -35,8 +34,7 @@ if __name__ == '__main__':
         version='1.0',
         description=DEFAULT_DESCRIPTION,
         long_description=LONG_DESCRIPTION,
-        author='Matthew Lefavor',
-        author_email='mclefavor@gmail.com',
+        author='Emma Lefavor',
         url='https://github.com/mlefavor/py-reprutils',
         download_url='https://pypi.python.org/pypi/reprutils',
         py_modules=['reprutils'],
